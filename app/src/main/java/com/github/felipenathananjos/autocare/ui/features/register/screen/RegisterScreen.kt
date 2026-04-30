@@ -22,8 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,19 +32,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.felipenathananjos.autocare.ui.components.SimpleDialog
 import com.github.felipenathananjos.autocare.ui.features.register.viewmodel.RegisterViewModel
+import kotlinx.coroutines.delay
 
 @Composable
-fun RegisterScreen(viewModel: RegisterViewModel = hiltViewModel(), snackbarHostState: SnackbarHostState) {
+fun RegisterScreen(
+    viewModel: RegisterViewModel = hiltViewModel(),
+    snackBarHostState: SnackbarHostState,
+    onUserRegistered: () -> Unit
+) {
 
     val state by viewModel.screenState.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    val scope = rememberCoroutineScope()
-
     LaunchedEffect(Unit) {
         viewModel.registrationSuccessful.collect {
             if (it) {
-                snackbarHostState.showSnackbar("Registro realizado com sucesso")
+                snackBarHostState.showSnackbar("Registro realizado com sucesso")
+                delay(2000)
+                onUserRegistered()
             }
         }
     }
@@ -58,7 +61,12 @@ fun RegisterScreen(viewModel: RegisterViewModel = hiltViewModel(), snackbarHostS
 @Composable
 private fun ScreenContent(state: RegisterScreenState, events: RegisterEvents) {
 
-    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Spacer(Modifier.height(80.dp))
         OutlinedTextField(
             value = state.email,
@@ -74,7 +82,8 @@ private fun ScreenContent(state: RegisterScreenState, events: RegisterEvents) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             placeholder = { Text("Email", style = MaterialTheme.typography.bodySmall) },
             shape = RoundedCornerShape(size = 20.dp),
-            colors = OutlinedTextFieldDefaults.colors().copy(unfocusedIndicatorColor = Color.LightGray),
+            colors = OutlinedTextFieldDefaults.colors()
+                .copy(unfocusedIndicatorColor = Color.LightGray),
             modifier = Modifier
                 .height(45.dp)
         )
@@ -93,7 +102,8 @@ private fun ScreenContent(state: RegisterScreenState, events: RegisterEvents) {
             onValueChange = events::onPasswordTextChange,
             placeholder = { Text("Senha", style = MaterialTheme.typography.bodySmall) },
             shape = RoundedCornerShape(size = 20.dp),
-            colors = OutlinedTextFieldDefaults.colors().copy(unfocusedIndicatorColor = Color.LightGray),
+            colors = OutlinedTextFieldDefaults.colors()
+                .copy(unfocusedIndicatorColor = Color.LightGray),
             modifier = Modifier
                 .height(45.dp)
         )
@@ -112,7 +122,8 @@ private fun ScreenContent(state: RegisterScreenState, events: RegisterEvents) {
             onValueChange = events::onConfirmPasswordTextChange,
             placeholder = { Text("Confirmar senha", style = MaterialTheme.typography.bodySmall) },
             shape = RoundedCornerShape(size = 20.dp),
-            colors = OutlinedTextFieldDefaults.colors().copy(unfocusedIndicatorColor = Color.LightGray),
+            colors = OutlinedTextFieldDefaults.colors()
+                .copy(unfocusedIndicatorColor = Color.LightGray),
             modifier = Modifier
                 .height(45.dp)
         )
@@ -126,12 +137,14 @@ private fun ScreenContent(state: RegisterScreenState, events: RegisterEvents) {
 @Composable
 @Preview
 private fun ScreenContentPreview() {
-    ScreenContent(RegisterScreenState(
-        "", "", ""
-    ), ScreenEventsMock)
+    ScreenContent(
+        RegisterScreenState(
+            "", "", ""
+        ), ScreenEventsMock
+    )
 }
 
-private val ScreenEventsMock = object: RegisterEvents {
+private val ScreenEventsMock = object : RegisterEvents {
     override fun onEmailTextChange(email: String) {
         TODO("Not yet implemented")
     }

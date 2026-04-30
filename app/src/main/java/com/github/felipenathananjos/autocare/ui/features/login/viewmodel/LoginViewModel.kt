@@ -1,6 +1,7 @@
 package com.github.felipenathananjos.autocare.ui.features.login.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.felipenathananjos.autocare.model.login.LoginService
 import com.github.felipenathananjos.autocare.model.registration.RegistrationService
 import com.github.felipenathananjos.autocare.ui.components.state.DialogState
@@ -8,10 +9,14 @@ import com.github.felipenathananjos.autocare.ui.components.state.SnackbarState
 import com.github.felipenathananjos.autocare.ui.features.login.screen.LoginEvents
 import com.github.felipenathananjos.autocare.ui.features.login.screen.LoginScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +26,9 @@ class LoginViewModel @Inject constructor(
 
     private val _viewState = MutableStateFlow(LoginScreenState())
     val viewState: StateFlow<LoginScreenState> = _viewState.asStateFlow()
+
+    private val _loginSuccess = MutableSharedFlow<Boolean>()
+    val loginSuccess: SharedFlow<Boolean> = _loginSuccess.asSharedFlow()
 
     private val _error = MutableStateFlow(SnackbarState())
     val error: StateFlow<SnackbarState> = _error.asStateFlow()
@@ -38,6 +46,10 @@ class LoginViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
+        login()
+    }
+
+    private fun login() {
         _viewState.value.let { state ->
             if (!state.userFilled) {
                 _error.update {
@@ -61,12 +73,15 @@ class LoginViewModel @Inject constructor(
 
             service.login(state.user, state.password).addOnCompleteListener { result ->
                 if (result.isSuccessful) {
-
+                    viewModelScope.launch {
+                        _loginSuccess.emit(true)
+                    }
                 } else {
                     _error.update {
                         it.copy(
                             show = true,
-                            message = result.exception?.message?:"Ocorreu um erro ao realizar o Login"
+                            message = result.exception?.message
+                                ?: "Ocorreu um erro ao realizar o Login"
                         )
                     }
                 }

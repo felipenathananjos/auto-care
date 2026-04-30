@@ -31,7 +31,7 @@ import com.github.felipenathananjos.autocare.model.expenses.ExpenseType
 
 @Composable
 fun HomeScreen() {
-//    ScreenContent()
+    ScreenContent(listOf())
 }
 
 @Composable

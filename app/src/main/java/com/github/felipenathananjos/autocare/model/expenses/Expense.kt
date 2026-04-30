@@ -7,5 +7,5 @@ data class Expense(
     var description: String,
     var value: Float,
     var type: ExpenseType,
-    var date: LocalDate
+    var date: LocalDate? = null
 )
