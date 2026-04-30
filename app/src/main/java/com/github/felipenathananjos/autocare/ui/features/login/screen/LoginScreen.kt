@@ -1,4 +1,4 @@
-package com.github.felipenathananjos.autocare.ui.features.login.view
+package com.github.felipenathananjos.autocare.ui.features.login.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,10 +27,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,20 +44,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.felipenathananjos.autocare.R
+import com.github.felipenathananjos.autocare.ui.components.state.SnackbarState
+import com.github.felipenathananjos.autocare.ui.features.login.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginScreen() {
-    ScreenContent()
+fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), goToRegistration: () -> Unit) {
+
+    val state by viewModel.viewState.collectAsState()
+    val error by viewModel.error.collectAsState()
+
+    ErrorSnackBar(error)
+    ScreenContent(state, viewModel, goToRegistration)
 }
 
 @Composable
-private fun ScreenContent() {
+fun ErrorSnackBar(error: SnackbarState) {
+
+    val snackBarState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    if (error.show) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                snackBarState.showSnackbar(error.message)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScreenContent(state: LoginScreenState, events: LoginEvents, goToRegistration: () -> Unit) {
 
     val pagerState = rememberPagerState(pageCount = { 4 }, initialPage = 0)
     val coroutineScope = rememberCoroutineScope()
@@ -69,7 +99,7 @@ private fun ScreenContent() {
 
     Column(
         Modifier
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxSize()
     ) {
         val imageModifier = Modifier
@@ -117,7 +147,7 @@ private fun ScreenContent() {
             Text("Login", style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.height(16.dp))
             OutlinedTextField(
-                value = "",
+                value = state.user,
                 textStyle = MaterialTheme.typography.bodySmall,
                 leadingIcon = {
                     Icon(
@@ -126,7 +156,7 @@ private fun ScreenContent() {
                         modifier = Modifier.size(18.dp)
                     )
                 },
-                onValueChange = {},
+                onValueChange = events::onUserTextChange,
                 placeholder = { Text("Usuário", style = MaterialTheme.typography.bodySmall) },
                 shape = RoundedCornerShape(size = 20.dp),
                 colors = OutlinedTextFieldDefaults.colors().copy(unfocusedIndicatorColor = Color.LightGray),
@@ -136,30 +166,28 @@ private fun ScreenContent() {
             Spacer(Modifier.height(12.dp))
             OutlinedTextField(
                 textStyle = MaterialTheme.typography.bodySmall,
-                value = "",
-                onValueChange = {},
+                value = state.password,
+                onValueChange = events::onUserPasswordChange,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
-                        contentDescription = "Usuário",
+                        contentDescription = "Senha",
                         modifier = Modifier.size(18.dp)
                     )
                 },
                 placeholder = { Text("Senha", style = MaterialTheme.typography.bodySmall) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
                 shape = RoundedCornerShape(size = 20.dp),
                 colors = OutlinedTextFieldDefaults.colors().copy(unfocusedIndicatorColor = Color.LightGray),
                 modifier = Modifier
                     .height(45.dp)
             )
             Spacer(Modifier.height(12.dp))
-            Button({}, modifier = Modifier.width(280.dp)) {
+            Button(events::onLoginButtonClick, modifier = Modifier.width(280.dp)) {
                 Text("Logar")
             }
             Spacer(Modifier.height(24.dp))
-            TextButton({
-
-            }) { Text("Cadastre-se") }
+            TextButton(goToRegistration) { Text("Cadastre-se") }
             Spacer(Modifier.height(30.dp))
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                 HorizontalDivider(Modifier.width(100.dp))
@@ -179,5 +207,27 @@ private fun ScreenContent() {
 @Preview(showBackground = true)
 @Composable
 private fun ScreenContentPreview() {
-    ScreenContent()
+    ScreenContent(LoginScreenState(), LoginEventsMock, {})
+}
+
+private val LoginEventsMock = object: LoginEvents {
+    override fun onUserTextChange(user: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onUserPasswordChange(password: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onLoginButtonClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRegisterButtonClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onGoogleLoginClick() {
+        TODO("Not yet implemented")
+    }
 }
