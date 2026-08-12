@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -33,29 +30,32 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val snackbarHostState = remember { SnackbarHostState() }
+            val snackBarHostState = remember { SnackbarHostState() }
             val auth = Firebase.auth
             val navController = rememberNavController()
             val startDestination = if (auth.currentUser != null) AppRoutes.Home else AppRoutes.Login
 
             AutoCareTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(), snackbarHost = {
-                    SnackbarHost(hostState = snackbarHostState)
+                    SnackbarHost(hostState = snackBarHostState)
                 }) { innerPadding ->
                     Column(
                         Modifier.padding(
-                            top = innerPadding.calculateTopPadding(),
-                            bottom = innerPadding.calculateBottomPadding()
+                            top = innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding()
                         )
                     ) {
                         NavHost(navController = navController, startDestination = startDestination) {
                             composable<AppRoutes.Login> {
-                                LoginScreen(goToRegistration = {
+                                LoginScreen(snackBarHostState = snackBarHostState, goToRegistration = {
                                     navController.navigate(AppRoutes.Register)
+                                }, onLoginSuccess = {
+                                    navController.navigate(AppRoutes.Home)
                                 })
                             }
                             composable<AppRoutes.Register> {
-                                RegisterScreen(snackbarHostState = snackbarHostState)
+                                RegisterScreen(snackBarHostState = snackBarHostState, onUserRegistered = {
+                                    navController.popBackStack()
+                                })
                             }
                             composable<AppRoutes.Home> {
                                 HomeScreen()
@@ -65,21 +65,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AutoCareTheme {
-        Greeting("Android")
     }
 }

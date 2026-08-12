@@ -38,7 +38,7 @@ import java.time.LocalDate
 
 @Composable
 fun HomeScreen() {
-//    ScreenContent()
+    ScreenContent(listOf())
 }
 
 @Composable

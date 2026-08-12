@@ -52,36 +52,58 @@ import com.github.felipenathananjos.autocare.R
 import com.github.felipenathananjos.autocare.ui.components.state.SnackbarState
 import com.github.felipenathananjos.autocare.ui.features.login.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), goToRegistration: () -> Unit) {
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    snackBarHostState: SnackbarHostState,
+    goToRegistration: () -> Unit,
+    onLoginSuccess: () -> Unit
+) {
 
     val state by viewModel.viewState.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    ErrorSnackBar(error)
+    ErrorSnackBar(error, snackBarHostState)
     ScreenContent(state, viewModel, goToRegistration)
+    LoginSuccess(viewModel.loginSuccess, onLoginSuccess, snackBarHostState)
 }
 
 @Composable
-fun ErrorSnackBar(error: SnackbarState) {
+fun LoginSuccess(loginSuccess: SharedFlow<Boolean>, onLoginSuccess: () -> Unit, snackBarHostState: SnackbarHostState) {
 
-    val snackBarState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-
-    if (error.show) {
-        LaunchedEffect(Unit) {
-            scope.launch {
-                snackBarState.showSnackbar(error.message)
+    LaunchedEffect(Unit) {
+        loginSuccess.collect {
+            if (it) {
+                snackBarHostState.showSnackbar("Login Realizado com sucesso!")
+                delay(2000)
+                onLoginSuccess()
             }
         }
     }
 }
 
 @Composable
-private fun ScreenContent(state: LoginScreenState, events: LoginEvents, goToRegistration: () -> Unit) {
+fun ErrorSnackBar(error: SnackbarState, snackBarHost: SnackbarHostState) {
+
+    val scope = rememberCoroutineScope()
+
+    if (error.show) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                snackBarHost.showSnackbar(error.message)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScreenContent(
+    state: LoginScreenState, events: LoginEvents, goToRegistration: () -> Unit
+) {
 
     val pagerState = rememberPagerState(pageCount = { 4 }, initialPage = 0)
     val coroutineScope = rememberCoroutineScope()
@@ -141,8 +163,7 @@ private fun ScreenContent(state: LoginScreenState, events: LoginEvents, goToRegi
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(vertical = 8.dp, horizontal = 16.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Login", style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.height(16.dp))
@@ -151,17 +172,14 @@ private fun ScreenContent(state: LoginScreenState, events: LoginEvents, goToRegi
                 textStyle = MaterialTheme.typography.bodySmall,
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.PersonOutline,
-                        contentDescription = "Usuário",
-                        modifier = Modifier.size(18.dp)
+                        imageVector = Icons.Outlined.PersonOutline, contentDescription = "Usuário", modifier = Modifier.size(18.dp)
                     )
                 },
                 onValueChange = events::onUserTextChange,
                 placeholder = { Text("Usuário", style = MaterialTheme.typography.bodySmall) },
                 shape = RoundedCornerShape(size = 20.dp),
                 colors = OutlinedTextFieldDefaults.colors().copy(unfocusedIndicatorColor = Color.LightGray),
-                modifier = Modifier
-                    .height(45.dp)
+                modifier = Modifier.height(45.dp)
             )
             Spacer(Modifier.height(12.dp))
             OutlinedTextField(
@@ -170,17 +188,14 @@ private fun ScreenContent(state: LoginScreenState, events: LoginEvents, goToRegi
                 onValueChange = events::onUserPasswordChange,
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.Lock,
-                        contentDescription = "Senha",
-                        modifier = Modifier.size(18.dp)
+                        imageVector = Icons.Outlined.Lock, contentDescription = "Senha", modifier = Modifier.size(18.dp)
                     )
                 },
                 placeholder = { Text("Senha", style = MaterialTheme.typography.bodySmall) },
                 visualTransformation = PasswordVisualTransformation(),
                 shape = RoundedCornerShape(size = 20.dp),
                 colors = OutlinedTextFieldDefaults.colors().copy(unfocusedIndicatorColor = Color.LightGray),
-                modifier = Modifier
-                    .height(45.dp)
+                modifier = Modifier.height(45.dp)
             )
             Spacer(Modifier.height(12.dp))
             Button(events::onLoginButtonClick, modifier = Modifier.width(280.dp)) {
@@ -189,16 +204,22 @@ private fun ScreenContent(state: LoginScreenState, events: LoginEvents, goToRegi
             Spacer(Modifier.height(24.dp))
             TextButton(goToRegistration) { Text("Cadastre-se") }
             Spacer(Modifier.height(30.dp))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 HorizontalDivider(Modifier.width(100.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("Ou faça Login com", style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray))
+                Text(
+                    "Ou faça Login com", style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
+                )
                 Spacer(Modifier.width(6.dp))
                 HorizontalDivider(Modifier.width(100.dp))
             }
             Spacer(Modifier.height(24.dp))
             IconButton({}) {
-                Image(painter = painterResource(R.drawable.google_logo), contentDescription = "Google")
+                Image(
+                    painter = painterResource(R.drawable.google_logo), contentDescription = "Google"
+                )
             }
         }
     }
@@ -210,7 +231,7 @@ private fun ScreenContentPreview() {
     ScreenContent(LoginScreenState(), LoginEventsMock, {})
 }
 
-private val LoginEventsMock = object: LoginEvents {
+private val LoginEventsMock = object : LoginEvents {
     override fun onUserTextChange(user: String) {
         TODO("Not yet implemented")
     }
