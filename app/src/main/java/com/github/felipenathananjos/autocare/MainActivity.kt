@@ -22,9 +22,9 @@ import com.github.felipenathananjos.autocare.ui.AppRoutes
 import com.github.felipenathananjos.autocare.ui.features.home.HomeScreen
 import com.github.felipenathananjos.autocare.ui.features.login.screen.LoginScreen
 import com.github.felipenathananjos.autocare.ui.features.register.screen.RegisterScreen
-import com.github.felipenathananjos.autocare.ui.theme.AutoCareTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.rodalog.app.ui.theme.AutoCareTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
