@@ -3,7 +3,6 @@ package com.github.felipenathananjos.autocare.ui.features.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsCar
@@ -27,13 +25,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.felipenathananjos.autocare.model.car.EngineType
 import com.github.felipenathananjos.autocare.model.car.FuelType
 import com.github.felipenathananjos.autocare.model.expenses.Expense
 import com.github.felipenathananjos.autocare.model.expenses.ExpenseType
+import com.github.felipenathananjos.autocare.ui.components.RoundedIcon
+import com.github.felipenathananjos.autocare.ui.theme.bold
 import com.rodalog.app.ui.theme.AutoCareTheme
+import com.rodalog.app.ui.theme.LocalExtendedColors
 import java.time.LocalDate
 
 @Composable
@@ -56,32 +58,11 @@ private fun ScreenContent(expenseList: List<Expense>) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    Modifier
-                        .size(28.dp)
-                        .background(
-                            shape = RoundedCornerShape(corner = CornerSize(28.dp)),
-                            color = MaterialTheme.colorScheme.surface
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = "Usuário",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                RoundedIcon(Icons.Filled.Person)
                 Spacer(Modifier.width(6.dp))
                 Text("Olá,\nFulano", style = MaterialTheme.typography.titleSmall)
             }
-            Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))) {
-                Icon(
-                    imageVector = Icons.Filled.Notifications,
-                    contentDescription = "Notificações",
-                    Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            RoundedIcon(Icons.Filled.Notifications)
         }
         Spacer(Modifier.height(8.dp))
         CarSelector("Argo 2019") { }
@@ -92,6 +73,16 @@ private fun ScreenContent(expenseList: List<Expense>) {
         Spacer(Modifier.height(16.dp))
         Row(Modifier.fillMaxWidth()) {
             MonthConsumption("1.340")
+            Spacer(Modifier.width(16.dp))
+            TopCategory("Manutenção")
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                "GASTOS RECENTES",
+                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground).bold()
+            )
+            Text("ver tudo", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary))
         }
     }
 }
@@ -150,18 +141,43 @@ private fun FuelConsumption(state: FuelConsumptionState) {
 
 @Composable
 private fun MonthConsumption(value: String) {
-    val size = 100.dp
-    val valueStyle = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary)
+    val colors = LocalExtendedColors.current
+    val valueStyle = MaterialTheme.typography.titleLarge.copy(color = colors.onCategoryFuel)
     Column(
         Modifier
             .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
-            .size(size)
+            .fillMaxWidth(0.4f)
+            .height(130.dp)
             .padding(8.dp)
     ) {
-        Text("GASTO NO\nMÊS", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface))
+        Text("GASTO NO\nMÊS", style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface))
+        Spacer(Modifier.height(8.dp))
         Text("R$", style = valueStyle)
         Text(value, style = valueStyle)
     }
+}
+
+@Composable
+private fun TopCategory(category: String) {
+    val colors = LocalExtendedColors.current
+    val categoryStyle =
+        MaterialTheme.typography.titleLarge.copy(color = colors.onCategoryMaintenance, fontWeight = FontWeight.Bold)
+    Column(
+        Modifier
+            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
+            .height(130.dp)
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Text("MAIOR GASTO", style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface))
+        Spacer(Modifier.height(8.dp))
+        Text(category, style = categoryStyle)
+    }
+}
+
+@Composable
+private fun RecentExpenses() {
+    
 }
 
 @Composable

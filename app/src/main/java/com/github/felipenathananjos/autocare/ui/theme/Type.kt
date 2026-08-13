@@ -32,3 +32,7 @@ val Typography = Typography(
     )
     */
 )
+
+fun TextStyle.bold(): TextStyle {
+    return copy(fontWeight = FontWeight.Bold)
+}
