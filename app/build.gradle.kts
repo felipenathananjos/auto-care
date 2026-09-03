@@ -44,6 +44,8 @@ android {
 
 dependencies {
 
+    val roomVersion = "2.6.1"
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -60,9 +62,19 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
+
     ksp("androidx.hilt:hilt-compiler:1.2.0")
     ksp(libs.hilt.compiler)
 
+    // Bibliotecas principais do Room
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion") // Suporte a Coroutines e Flow
+
+    // Processador de anotações usando KSP
+    ksp("androidx.room:room-compiler:$roomVersion")
+
+    // Opcional - Suporte a Testes para o Room
+    testImplementation("androidx.room:room-testing:$roomVersion")
 
     implementation(platform("com.google.firebase:firebase-bom:34.2.0"))
     implementation("com.google.firebase:firebase-analytics")
@@ -71,6 +83,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
     //recaptcha
     implementation ("com.google.android.recaptcha:recaptcha:18.8.0")

@@ -21,8 +21,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocalGasStation
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.felipenathananjos.autocare.ui.components.RoundedIcon
-import com.github.felipenathananjos.autocare.ui.features.home.state.CarItemState
+import com.github.felipenathananjos.autocare.ui.features.home.state.VehicleItemState
 import com.github.felipenathananjos.autocare.ui.features.home.state.ExpenseItemState
 import com.github.felipenathananjos.autocare.ui.features.home.state.HomeScreenState
 import com.github.felipenathananjos.autocare.ui.theme.bold
@@ -185,9 +183,18 @@ private fun RecentExpenses(expenses: List<ExpenseItemState>) {
     val lastIndex = if (expenses.size >= 5) 5 else expenses.size
     val firstExpenses = expenses.subList(0, lastIndex)
 
-    for (expense in firstExpenses) {
-        ExpenseItem(expense)
-        Spacer(Modifier.height(4.dp))
+    if (expenses.isNotEmpty()) {
+        for (expense in firstExpenses) {
+            ExpenseItem(expense)
+            Spacer(Modifier.height(4.dp))
+        }
+    } else {
+        Box(Modifier.fillMaxSize().padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
+            Text(
+                "Você ainda não possui gastos",
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
+            )
+        }
     }
 }
 
@@ -261,28 +268,30 @@ private fun ExpenseItemPreview() {
 @Preview(name = "Tela inicial")
 private fun ScreenContentPreview() {
     AutoCareTheme {
-        ScreenContent(HomeScreenState(
-            expenses = listOf(
-                ExpenseItemState(
-                    expense = "Ajuste freio", value = "R$ 250,23", icon = Icons.Default.LocalGasStation, date = "Hoje, 08:14"
-                ), ExpenseItemState(
-                    expense = "Motor de arranque", value = "R$ 400,00", icon = Icons.Default.Settings, date = "Ontem"
-                ), ExpenseItemState(
-                    expense = "Balanceamento", value = "R$ 150,00", icon = Icons.Default.Settings, date = "28, jul."
-                ), ExpenseItemState(
-                    expense = "Gasolina", value = "R$ 120,00", icon = Icons.Default.LocalGasStation, date = "28, jul."
-                ), ExpenseItemState(
-                    expense = "Som Automotivo", value = "R$ 200,00", icon = Icons.Default.Star, date = "16, mai."
-                )
-            ),
-            monthSpent = "R$ 1.340,00",
-            topCategory = "Manutenção",
-            carList = listOf(
-                CarItemState(1, "Argo 2019"),
-                CarItemState(2, "CG Fan 2018"),
-            ),
-            fuelConsumption = "Média de 14,5 km/l"
-        ))
+        ScreenContent(
+            HomeScreenState(
+                expenses = listOf(
+//                ExpenseItemState(
+//                    expense = "Ajuste freio", value = "R$ 250,23", icon = Icons.Default.LocalGasStation, date = "Hoje, 08:14"
+//                ), ExpenseItemState(
+//                    expense = "Motor de arranque", value = "R$ 400,00", icon = Icons.Default.Settings, date = "Ontem"
+//                ), ExpenseItemState(
+//                    expense = "Balanceamento", value = "R$ 150,00", icon = Icons.Default.Settings, date = "28, jul."
+//                ), ExpenseItemState(
+//                    expense = "Gasolina", value = "R$ 120,00", icon = Icons.Default.LocalGasStation, date = "28, jul."
+//                ), ExpenseItemState(
+//                    expense = "Som Automotivo", value = "R$ 200,00", icon = Icons.Default.Star, date = "16, mai."
+//                )
+                ),
+                monthSpent = "R$ 1.340,00",
+                topCategory = "Manutenção",
+                carList = listOf(
+                    VehicleItemState(1, "Argo 2019"),
+                    VehicleItemState(2, "CG Fan 2018"),
+                ),
+                fuelConsumption = "Média de 14,5 km/l"
+            )
+        )
     }
 }
 

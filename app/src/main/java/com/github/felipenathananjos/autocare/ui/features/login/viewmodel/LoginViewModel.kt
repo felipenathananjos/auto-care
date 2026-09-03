@@ -2,9 +2,7 @@ package com.github.felipenathananjos.autocare.ui.features.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.felipenathananjos.autocare.model.login.LoginService
-import com.github.felipenathananjos.autocare.model.registration.RegistrationService
-import com.github.felipenathananjos.autocare.ui.components.state.DialogState
+import com.github.felipenathananjos.autocare.domain.login.LoginService
 import com.github.felipenathananjos.autocare.ui.components.state.SnackbarState
 import com.github.felipenathananjos.autocare.ui.features.login.screen.LoginEvents
 import com.github.felipenathananjos.autocare.ui.features.login.screen.LoginScreenState

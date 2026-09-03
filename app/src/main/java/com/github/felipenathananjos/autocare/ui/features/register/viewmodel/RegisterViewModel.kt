@@ -5,8 +5,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.felipenathananjos.autocare.model.registration.RegistrationService
-import com.github.felipenathananjos.autocare.model.registration.RegistrationStatus
+import com.github.felipenathananjos.autocare.domain.registration.RegistrationService
+import com.github.felipenathananjos.autocare.domain.registration.RegistrationStatus
 import com.github.felipenathananjos.autocare.ui.components.state.DialogState
 import com.github.felipenathananjos.autocare.ui.features.register.screen.RegisterEvents
 import com.github.felipenathananjos.autocare.ui.features.register.screen.RegisterScreenState

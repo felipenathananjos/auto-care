@@ -1,4 +1,4 @@
-package com.github.felipenathananjos.autocare.model.registration
+package com.github.felipenathananjos.autocare.domain.registration
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.suspendCancellableCoroutine

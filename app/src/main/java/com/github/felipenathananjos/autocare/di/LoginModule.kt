@@ -1,12 +1,10 @@
-package di
+package com.github.felipenathananjos.autocare.di
 
-import com.github.felipenathananjos.autocare.model.login.LoginService
-import com.github.felipenathananjos.autocare.model.login.LoginServiceImpl
+import com.github.felipenathananjos.autocare.domain.login.LoginService
+import com.github.felipenathananjos.autocare.domain.login.LoginServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.components.SingletonComponent
 
 @Module

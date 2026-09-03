@@ -4,6 +4,6 @@ data class HomeScreenState(
     val expenses: List<ExpenseItemState> = listOf(),
     val monthSpent: String = "",
     val topCategory: String = "",
-    val carList: List<CarItemState> = mutableListOf(),
+    val carList: List<VehicleItemState> = mutableListOf(),
     val fuelConsumption: String = ""
 )

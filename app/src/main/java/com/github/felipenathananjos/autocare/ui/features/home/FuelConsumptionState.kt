@@ -1,7 +1,7 @@
 package com.github.felipenathananjos.autocare.ui.features.home
 
-import com.github.felipenathananjos.autocare.model.car.EngineType
-import com.github.felipenathananjos.autocare.model.car.FuelType
+import com.github.felipenathananjos.autocare.domain.vehicle.EngineType
+import com.github.felipenathananjos.autocare.domain.vehicle.FuelType
 
 data class FuelConsumptionState(
     val range: Int,

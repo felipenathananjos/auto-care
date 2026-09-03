@@ -1,7 +1,7 @@
-package di
+package com.github.felipenathananjos.autocare.di
 
-import com.github.felipenathananjos.autocare.model.registration.RegistrationService
-import com.github.felipenathananjos.autocare.model.registration.RegistrationServiceImpl
+import com.github.felipenathananjos.autocare.domain.registration.RegistrationService
+import com.github.felipenathananjos.autocare.domain.registration.RegistrationServiceImpl
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
